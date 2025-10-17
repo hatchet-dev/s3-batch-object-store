@@ -53,8 +53,9 @@ type client[K comparable] struct {
 
 // NewClient creates a new client that can be used to upload and download objects to s3.
 // K represents the type of IDs for the objects that will be uploaded and fetched.
-func NewClient[K comparable](awsConfig aws.Config, s3Bucket string) Client[K] {
-	s3Client := s3.NewFromConfig(awsConfig)
+func NewClient[K comparable](awsConfig aws.Config, s3Bucket string, optFns ...func(*s3.Options)) Client[K] {
+	s3Client := s3.NewFromConfig(awsConfig, optFns...)
+
 	return &client[K]{
 		s3Client: s3Client,
 		s3Bucket: s3Bucket,
