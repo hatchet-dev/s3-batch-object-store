@@ -5,8 +5,6 @@ import (
 	"io"
 	"os"
 	"time"
-
-	"github.com/oklog/ulid/v2"
 )
 
 // TempFile creates a temp file in the filesystem, and is used to store the contents that will be uploaded to s3.
@@ -37,9 +35,7 @@ func (c *client[K]) NewTempFile(key string, tags map[string]string) (*TempFile[K
 }
 
 func NewTempFile[K comparable](key string, tags map[string]string) (*TempFile[K], error) {
-	fileName := ulid.Make().String()
-
-	file, err := os.CreateTemp(os.TempDir(), fileName)
+	file, err := os.CreateTemp(os.TempDir(), key)
 	if err != nil {
 		return nil, err
 	}
