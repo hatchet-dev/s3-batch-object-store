@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	mocks3 "github.com/hatchet-dev/s3-batch-object-store/mock/aws"
+	"github.com/oklog/ulid/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 )
@@ -63,13 +64,14 @@ func TestClient_Fetch(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	s3Mock := mocks3.NewMockS3Client(ctrl)
+	key := ulid.Make().String()
 
 	c := client[string]{
 		s3Bucket: testBucketName,
 		s3Client: s3Mock,
 	}
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 
@@ -114,7 +116,7 @@ func TestClient_Fetch(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 	}
 
-	err = c.UploadFile(ctx, nil, file, true)
+	err = c.UploadFile(ctx, file, true)
 	g.Expect(err).To(BeNil())
 	g.Expect(len(file.indexes)).To(Equal(len(expectedIndexes)))
 	for id, index := range expectedIndexes {
@@ -125,7 +127,7 @@ func TestClient_Fetch(t *testing.T) {
 	}
 
 	for id, ind := range expectedIndexes {
-		b, err := c.Fetch(ctx, nil, ind)
+		b, err := c.Fetch(ctx, ind)
 		g.Expect(err).To(BeNil())
 
 		actualPayload, err := gzipDecompress(b)
@@ -152,7 +154,7 @@ func TestClient_FetchError(t *testing.T) {
 	}
 
 	idx := ObjectIndex{File: "1234", Offset: 0, Length: 120}
-	b, err := c.Fetch(ctx, nil, idx)
+	b, err := c.Fetch(ctx, idx)
 	g.Expect(err).To(MatchError("failed to download object from file test-bucket/1234 bytes=0-119: error connecting to s3"))
 	g.Expect(b).To(BeNil())
 }

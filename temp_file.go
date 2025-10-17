@@ -9,9 +9,6 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
-// version is used to prefix the file name, so that we can change how the files are read in the future
-const version string = "v1"
-
 // TempFile creates a temp file in the filesystem, and is used to store the contents that will be uploaded to s3.
 // This way we avoid having all the bytes in memory.
 // This will also keep track of the indexes for each slice of bytes, in order to know where each of them are located
@@ -35,11 +32,11 @@ type ObjectIndex struct {
 	Length uint64 `json:"length"`
 }
 
-func (c *client[K]) NewTempFile(tags map[string]string) (*TempFile[K], error) {
-	return NewTempFile[K](tags)
+func (c *client[K]) NewTempFile(key string, tags map[string]string) (*TempFile[K], error) {
+	return NewTempFile[K](key, tags)
 }
 
-func NewTempFile[K comparable](tags map[string]string) (*TempFile[K], error) {
+func NewTempFile[K comparable](key string, tags map[string]string) (*TempFile[K], error) {
 	fileName := ulid.Make().String()
 
 	file, err := os.CreateTemp(os.TempDir(), fileName)
@@ -48,7 +45,7 @@ func NewTempFile[K comparable](tags map[string]string) (*TempFile[K], error) {
 	}
 
 	return &TempFile[K]{
-		fileName:  version + "/" + timeToFilePath(time.Now()) + "/" + fileName,
+		fileName:  key,
 		file:      file,
 		createdOn: time.Now(),
 		tags:      tags,
@@ -146,9 +143,4 @@ func (f *TempFile[K]) readOnly() (*os.File, error) {
 	}
 	f.readonly = true
 	return f.file, nil
-}
-
-// timeToFilePath returns the time formatted as yyyy/mm/dd/hh, in UTC timezone
-func timeToFilePath(t time.Time) string {
-	return t.UTC().Format("2006/01/02/15")
 }

@@ -19,13 +19,13 @@ type Client[K comparable] interface {
 	// tags can be used to store information about this file in S3, like retention days
 	// The file itself is not thread safe, if you expect to make concurrent calls to Append, you should protect it.
 	// Once all the objects are appended, you can call UploadFile to upload the file to s3.
-	NewTempFile(tags map[string]string) (*TempFile[K], error)
+	NewTempFile(key string, tags map[string]string) (*TempFile[K], error)
 
 	// UploadFile will take a TempFile that already has all the objects in it, and upload it to a s3 file,
 	// in one single operation.
 	// withMetaFile indicates whether the metadata will be also uploaded to the file.MetaFileKey() location,
 	// with the index information for each object, or not.
-	UploadFile(ctx context.Context, key *string, file *TempFile[K], withMetaFile bool) error
+	UploadFile(ctx context.Context, file *TempFile[K], withMetaFile bool) error
 
 	// DeleteFile allows to try to delete any files that may have been uploaded to s3 based on the provided file.
 	// This is provided in case of any error when calling UploadFile, callers have the possibility to clean up the files.
@@ -34,7 +34,7 @@ type Client[K comparable] interface {
 	// Fetch downloads the payload from s3 given the ObjectIndex, fetching only the needed bytes, and returning
 	// the payload as a byte array.
 	// The caller is responsible for decompressing/unmarshalling or any operation needed to parse it to the proper struct.
-	Fetch(ctx context.Context, key *string, ind ObjectIndex) ([]byte, error)
+	Fetch(ctx context.Context, ind ObjectIndex) ([]byte, error)
 }
 
 // S3Client is used to mock the aws s3 functions used in this module.

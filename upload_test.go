@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	mocks3 "github.com/hatchet-dev/s3-batch-object-store/mock/aws"
+	"github.com/oklog/ulid/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 )
@@ -161,7 +162,8 @@ func TestClient_UploadFile(t *testing.T) {
 				s3Client: s3Mock,
 			}
 
-			file, err := c.NewTempFile(testTags)
+			key := ulid.Make().String()
+			file, err := c.NewTempFile(key, testTags)
 			g.Expect(err).ToNot(HaveOccurred())
 			defer func() { _ = file.Close() }()
 
@@ -176,7 +178,7 @@ func TestClient_UploadFile(t *testing.T) {
 			g.Expect(file.Size()).To(BeNumerically(">=", uint64(0)))
 
 			test.configureMocks(g, file, s3Mock)
-			err = c.UploadFile(ctx, nil, file, test.withMetaFile)
+			err = c.UploadFile(ctx, file, test.withMetaFile)
 			if test.err == nil {
 				g.Expect(err).ToNot(HaveOccurred())
 			} else {
@@ -264,7 +266,9 @@ func TestClient_DeleteFile(t *testing.T) {
 				s3Client: s3Mock,
 			}
 
-			file, err := c.NewTempFile(testTags)
+			key := ulid.Make().String()
+
+			file, err := c.NewTempFile(key, testTags)
 			g.Expect(err).ToNot(HaveOccurred())
 			defer func() { _ = file.Close() }()
 
