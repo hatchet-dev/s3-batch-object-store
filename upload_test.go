@@ -176,7 +176,7 @@ func TestClient_UploadFile(t *testing.T) {
 			g.Expect(file.Size()).To(BeNumerically(">=", uint64(0)))
 
 			test.configureMocks(g, file, s3Mock)
-			err = c.UploadFile(ctx, file, test.withMetaFile)
+			err = c.UploadFile(ctx, nil, file, test.withMetaFile)
 			if test.err == nil {
 				g.Expect(err).ToNot(HaveOccurred())
 			} else {

@@ -11,16 +11,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-func (c *client[K]) UploadFile(ctx context.Context, file *TempFile[K], withMetaFile bool) error {
+func (c *client[K]) UploadFile(ctx context.Context, key *string, file *TempFile[K], withMetaFile bool) error {
 	body, err := file.readOnly()
 	if err != nil {
 		return fmt.Errorf("failed to get the readonly file: %w", err)
 	}
 
+	if key == nil {
+		key = &file.fileName
+	}
+
 	tagging := serializeTags(file.Tags())
 	_, err = c.s3Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:  &c.s3Bucket,
-		Key:     &file.fileName,
+		Key:     key,
 		Body:    body,
 		Tagging: &tagging,
 	})

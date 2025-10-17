@@ -25,7 +25,7 @@ type Client[K comparable] interface {
 	// in one single operation.
 	// withMetaFile indicates whether the metadata will be also uploaded to the file.MetaFileKey() location,
 	// with the index information for each object, or not.
-	UploadFile(ctx context.Context, file *TempFile[K], withMetaFile bool) error
+	UploadFile(ctx context.Context, key *string, file *TempFile[K], withMetaFile bool) error
 
 	// DeleteFile allows to try to delete any files that may have been uploaded to s3 based on the provided file.
 	// This is provided in case of any error when calling UploadFile, callers have the possibility to clean up the files.

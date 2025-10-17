@@ -114,7 +114,7 @@ func TestClient_Fetch(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 	}
 
-	err = c.UploadFile(ctx, file, true)
+	err = c.UploadFile(ctx, nil, file, true)
 	g.Expect(err).To(BeNil())
 	g.Expect(len(file.indexes)).To(Equal(len(expectedIndexes)))
 	for id, index := range expectedIndexes {
