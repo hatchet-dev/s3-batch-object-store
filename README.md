@@ -1,10 +1,10 @@
 # s3-batch-object-store
 
-`s3-batch-object-store` is a Go module that allows for batch uploading of objects to a single S3 file and retrieving 
+`s3-batch-object-store` is a Go module that allows for batch uploading of objects to a single S3 file and retrieving
 each object separately using the AWS S3 API, fetching only the bytes for that specific object.
 
 The method basically consists of appending multiple objects to a single file, keep the information of where each object
-is placed in the file, and then upload one single file to s3 with many objects in it, reducing drastically the number 
+is placed in the file, and then upload one single file to s3 with many objects in it, reducing drastically the number
 of PUT operations needed to store a large number of objets.
 
 After uploading a file, you can store the index information by calling `file.Indexes()` wherever you want.
@@ -14,7 +14,7 @@ the scope of what this package aspires to do.
 Then, when you need to retrieve an object, you can use the index information to fetch that object and the GET call to s3
 will only retrieve the bytes that correspond to that object, reducing the amount of data transferred.
 
-This method of storage and retrieval is well suited for write-heavy workloads, where you want to fetch a small 
+This method of storage and retrieval is well suited for write-heavy workloads, where you want to fetch a small
 percentage of the stored objects later.
 This storage approach also works well when you have objects of widely varying size.
 
@@ -28,7 +28,7 @@ This storage approach also works well when you have objects of widely varying si
 To install the module, use `go get`:
 
 ```sh
-go get github.com/embrace-io/s3-batch-object-store
+go get github.com/hatchet-dev/s3-batch-object-store
 ```
 
 ## Usage
@@ -36,7 +36,6 @@ go get github.com/embrace-io/s3-batch-object-store
 ### Example
 
 Here is a basic example demonstrating how to use the `s3-batch-object-store` module:
-
 
 ```go
 package main
@@ -47,7 +46,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/embrace-io/s3-batch-object-store"
+	"github.com/hatchet-dev/s3-batch-object-store"
 )
 
 func main() {
