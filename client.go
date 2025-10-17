@@ -34,7 +34,7 @@ type Client[K comparable] interface {
 	// Fetch downloads the payload from s3 given the ObjectIndex, fetching only the needed bytes, and returning
 	// the payload as a byte array.
 	// The caller is responsible for decompressing/unmarshalling or any operation needed to parse it to the proper struct.
-	Fetch(ctx context.Context, ind ObjectIndex) ([]byte, error)
+	Fetch(ctx context.Context, key *string, ind ObjectIndex) ([]byte, error)
 }
 
 // S3Client is used to mock the aws s3 functions used in this module.

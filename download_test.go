@@ -125,7 +125,7 @@ func TestClient_Fetch(t *testing.T) {
 	}
 
 	for id, ind := range expectedIndexes {
-		b, err := c.Fetch(ctx, ind)
+		b, err := c.Fetch(ctx, nil, ind)
 		g.Expect(err).To(BeNil())
 
 		actualPayload, err := gzipDecompress(b)
@@ -152,7 +152,7 @@ func TestClient_FetchError(t *testing.T) {
 	}
 
 	idx := ObjectIndex{File: "1234", Offset: 0, Length: 120}
-	b, err := c.Fetch(ctx, idx)
+	b, err := c.Fetch(ctx, nil, idx)
 	g.Expect(err).To(MatchError("failed to download object from file test-bucket/1234 bytes=0-119: error connecting to s3"))
 	g.Expect(b).To(BeNil())
 }

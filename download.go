@@ -9,15 +9,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func (c *client[K]) Fetch(ctx context.Context, ind ObjectIndex) ([]byte, error) {
+func (c *client[K]) Fetch(ctx context.Context, key *string, ind ObjectIndex) ([]byte, error) {
 	byteRange := byteRangeString(ind.Offset, ind.Length)
+	if key == nil {
+		key = &ind.File
+	}
+
 	result, err := c.s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(c.s3Bucket),
 		Key:    aws.String(ind.File),
 		Range:  aws.String(byteRange),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to download object from file %s/%s %s: %w", c.s3Bucket, ind.File, byteRange, err)
+		return nil, fmt.Errorf("failed to download object from file %s/%s %s: %w", c.s3Bucket, key, byteRange, err)
 	}
 
 	defer func() { _ = result.Body.Close() }()
