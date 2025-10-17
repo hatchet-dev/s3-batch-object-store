@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io"
 	"testing"
-	"time"
 
+	"github.com/oklog/ulid/v2"
 	. "github.com/onsi/gomega"
 )
 
@@ -22,8 +22,9 @@ func TestFile_Append(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	c := client[string]{}
+	key := ulid.Make().String()
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 
@@ -54,8 +55,9 @@ func TestFile_WriteError(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	c := client[string]{}
+	key := ulid.Make().String()
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 
@@ -89,8 +91,9 @@ func TestFile_ReadOnly(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	c := client[string]{}
+	key := ulid.Make().String()
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 
@@ -124,8 +127,9 @@ func TestFile_ReadOnlyError(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	c := client[string]{}
+	key := ulid.Make().String()
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 
@@ -145,12 +149,6 @@ func TestFile_ReadOnlyError(t *testing.T) {
 	roFile, err := file.readOnly()
 	g.Expect(roFile).To(BeNil())
 	g.Expect(err).To(MatchError(fmt.Sprintf("seek %s: file already closed", file.file.Name())))
-}
-
-func TestTimeToFilePath(t *testing.T) {
-	g := NewGomegaWithT(t)
-	tt := time.Date(2021, 10, 8, 02, 10, 14, 33, time.UTC)
-	g.Expect(timeToFilePath(tt)).To(Equal("2021/10/08/02"))
 }
 
 // TestObject represents a document that may be uploaded to s3 and fetched from s3

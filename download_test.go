@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	mocks3 "github.com/hatchet-dev/s3-batch-object-store/mock/aws"
+	"github.com/oklog/ulid/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 )
@@ -63,13 +64,14 @@ func TestClient_Fetch(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	s3Mock := mocks3.NewMockS3Client(ctrl)
+	key := ulid.Make().String()
 
 	c := client[string]{
 		s3Bucket: testBucketName,
 		s3Client: s3Mock,
 	}
 
-	file, err := c.NewTempFile(testTags)
+	file, err := c.NewTempFile(key, testTags)
 	g.Expect(err).ToNot(HaveOccurred())
 	defer func() { _ = file.Close() }()
 

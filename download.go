@@ -11,6 +11,7 @@ import (
 
 func (c *client[K]) Fetch(ctx context.Context, ind ObjectIndex) ([]byte, error) {
 	byteRange := byteRangeString(ind.Offset, ind.Length)
+
 	result, err := c.s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(c.s3Bucket),
 		Key:    aws.String(ind.File),

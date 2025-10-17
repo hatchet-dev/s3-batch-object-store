@@ -19,7 +19,7 @@ type Client[K comparable] interface {
 	// tags can be used to store information about this file in S3, like retention days
 	// The file itself is not thread safe, if you expect to make concurrent calls to Append, you should protect it.
 	// Once all the objects are appended, you can call UploadFile to upload the file to s3.
-	NewTempFile(tags map[string]string) (*TempFile[K], error)
+	NewTempFile(key string, tags map[string]string) (*TempFile[K], error)
 
 	// UploadFile will take a TempFile that already has all the objects in it, and upload it to a s3 file,
 	// in one single operation.
@@ -53,8 +53,9 @@ type client[K comparable] struct {
 
 // NewClient creates a new client that can be used to upload and download objects to s3.
 // K represents the type of IDs for the objects that will be uploaded and fetched.
-func NewClient[K comparable](awsConfig aws.Config, s3Bucket string) Client[K] {
-	s3Client := s3.NewFromConfig(awsConfig)
+func NewClient[K comparable](awsConfig aws.Config, s3Bucket string, optFns ...func(*s3.Options)) Client[K] {
+	s3Client := s3.NewFromConfig(awsConfig, optFns...)
+
 	return &client[K]{
 		s3Client: s3Client,
 		s3Bucket: s3Bucket,

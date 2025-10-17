@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	mocks3 "github.com/hatchet-dev/s3-batch-object-store/mock/aws"
+	"github.com/oklog/ulid/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 )
@@ -161,7 +162,8 @@ func TestClient_UploadFile(t *testing.T) {
 				s3Client: s3Mock,
 			}
 
-			file, err := c.NewTempFile(testTags)
+			key := ulid.Make().String()
+			file, err := c.NewTempFile(key, testTags)
 			g.Expect(err).ToNot(HaveOccurred())
 			defer func() { _ = file.Close() }()
 
@@ -264,7 +266,9 @@ func TestClient_DeleteFile(t *testing.T) {
 				s3Client: s3Mock,
 			}
 
-			file, err := c.NewTempFile(testTags)
+			key := ulid.Make().String()
+
+			file, err := c.NewTempFile(key, testTags)
 			g.Expect(err).ToNot(HaveOccurred())
 			defer func() { _ = file.Close() }()
 
