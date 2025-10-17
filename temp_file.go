@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -35,7 +36,9 @@ func (c *client[K]) NewTempFile(key string, tags map[string]string) (*TempFile[K
 }
 
 func NewTempFile[K comparable](key string, tags map[string]string) (*TempFile[K], error) {
-	file, err := os.CreateTemp(os.TempDir(), key)
+	pattern := filepath.Base(key)
+
+	file, err := os.CreateTemp(os.TempDir(), pattern)
 	if err != nil {
 		return nil, err
 	}
