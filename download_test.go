@@ -11,7 +11,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	mocks3 "github.com/embrace-io/s3-batch-object-store/mock/aws"
+	mocks3 "github.com/hatchet-dev/s3-batch-object-store/mock/aws"
 	. "github.com/onsi/gomega"
 	"go.uber.org/mock/gomock"
 )

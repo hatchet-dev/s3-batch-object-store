@@ -1,4 +1,4 @@
-module github.com/embrace-io/s3-batch-object-store
+module github.com/hatchet-dev/s3-batch-object-store
 
 go 1.24.0
 

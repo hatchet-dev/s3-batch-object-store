@@ -14,7 +14,7 @@ import (
 	reflect "reflect"
 
 	s3 "github.com/aws/aws-sdk-go-v2/service/s3"
-	s3batchstore "github.com/embrace-io/s3-batch-object-store"
+	s3batchstore "github.com/hatchet-dev/s3-batch-object-store"
 	gomock "go.uber.org/mock/gomock"
 )
 
